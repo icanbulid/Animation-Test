@@ -1,53 +1,42 @@
-//using UnityEngine;
+using System;
+using UnityEngine;
 
-//public class AllLegs : MonoBehaviour
-//{
-//    [SerializeField] 
-//    private LegData[] legs;
+public class AllLegs : MonoBehaviour
+{
+    [SerializeField]
+    private LegData[] legs;
 
-//    [SerializeField]
-//    private float stepLength = 0.75f;
-
-
-//    private void Update()
-//    {
-//        foreach(var legData in legs)
-//        {
-//            if (!legData.Leg.IsMoving &&
-//                !(Vector3.Distance(legData.Leg.Position, legData.Raycast.Position) > stepLength)) continue;
-//            legData.leg.MoveTo(legData.Raycast.Position);
-//        }
+    [SerializeField]
+    private float stepLength = 0.75f;
 
 
-//    }
+    private void Update()
+    {
+        for (var index = 0; index < legs.Length; index++)
+        {
+            ref var legData = ref legs[index];
+            if (!CanMove(index)) continue;
 
-//    public void MoveTo(Vector3 targetPosition)
-//    {
-//        if (movement == null)
-//        {
-//            movement = new Movement
-//            {
-//                Progress = 0,
-//                FromPosition = position,
-//                ToPosition = targetPosition
+            if (!legData.Leg.IsMoving &&
+                !(Vector3.Distance(legData.Leg.Position, legData.Raycast.Position) > stepLength)) continue;
+            legData.Leg.MoveTo(legData.Raycast.Position);
+        }
 
-//            };
-//        }
-//        else
-//        {
-//            movement = new Movement
-//            {
-//                Progress = movement.Value.Progress,
-//                FromPosition = movement.Value.FromPosition,
-//                ToPosition = targetPosition
 
-//            };
-//        }
-//        [SerializeField]
-//        private struct LegData
-//    {
-//        public LegTarget leg;
-//        public LegRaycast Raycast;
+    }
 
-//    }
-//}
+    private bool CanMove(int legIndex)
+    {
+        var legsCount = legs.Length;
+        var n1 = legs[(legIndex + legsCount - 1) % legsCount];
+        var n2 = legs[(legIndex + 1) % legsCount];
+        return !n1.Leg.IsMoving && !n2.Leg.IsMoving;
+    }
+    [Serializable]
+    private struct LegData
+    {
+        public LegTarget Leg;
+        public LegRaycast Raycast;
+
+    }
+}

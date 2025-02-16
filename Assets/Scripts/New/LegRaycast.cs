@@ -1,26 +1,25 @@
-//using UnityEngine;
+using UnityEngine;
 
-//public class LegRaycast : MonoBehaviour
-//{
-//    private RaycastHit hit;
-//    private Transform transform;
+[System.Serializable]
+public class LegRaycast : MonoBehaviour
+{
+    private RaycastHit hit;
+    private Transform transform;
 
-//    public Vector3 Position => hit.point;
+    public Vector3 Position => hit.point;
+    public Vector3 Normal => hit.normal;
 
-//    public Vector3 Normal => hit.normal;
+    private void Awake()
+    {
+        transform = base.transform;
+    }
 
-//    private void  Awake()
-//    {
-//        transform = base.transform;
-//    }
-//    private void Update()
-//    {
-//        var ray = new LegRaycast(transform.position, transform.forward);
-//        Physics.Raycast(ray,out hit);
+    private void Update()
+    {
+        var ray = new Ray(transform.position, -transform.up); // Направляем луч вниз
+        Physics.Raycast(ray, out hit);
 
-
-
-
-
-//    }
-//}
+        // Визуализация луча
+        Debug.DrawRay(transform.position, -transform.up * 10f, Color.red); // Рисуем луч длиной 10 единиц
+    }
+}
